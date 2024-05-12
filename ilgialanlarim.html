@@ -1,0 +1,234 @@
+<?php
+    session_start();
+
+    // Oturumda giriş yapılmamışsa, kullanıcıyı giriş sayfasına yönlendir
+    if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+        header("Location: giris.html");
+        exit;
+    }
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İLGİ ALANLARIM</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .jumbotron {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('background.jpg') center/cover no-repeat;
+            color: white;
+            padding: 50px 0;
+            margin-bottom: 0;
+        }
+
+        .card {
+            margin-top: 30px;
+        }
+
+        .card-header {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .card-body {
+            padding: 20px;
+            text-align: center;
+            /* Ortalama için */
+        }
+
+        .card-title {
+            font-weight: bold;
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: auto;
+            display: block;
+            /* Resimlerin ortalanması için */
+            margin: 0 auto;
+            /* Resimlerin ortalanması için */
+            margin-bottom: 20px;
+            /* Yazı ile resim arasındaki boşluğu ayarlamak için */
+        }
+
+        .film-card,
+        .book-card {
+            margin-bottom: 20px;
+        }
+
+        .book-card img {
+            max-width: 100px;
+            height: auto;
+            display: block;
+            margin: 0 auto 10px;
+        }
+
+        .book-card .card-body {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">NİSA NUR GÜREL</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="anasayfa.html">Anasayfa</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="hakkimda.html">Hakkımda</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="ozgecmis.html">Özgeçmiş</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="sehrim.html">Şehrim</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="takim.html">Takımım</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="ilgialanlarim.html">İlgi Alanlarım</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="iletisim.html">İletişim</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="giris.html">Giriş Yap</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="jumbotron text-center">
+        <h1 class="display-4">İlgi Alanlarım</h1>
+        <p>Merhaba, ben Nisa. Aşağıya benim sevdiğim filmlerden - kitaplardan bazılarını ekledim</p>
+          <p>ve içerikleri hakkında özet bilgiler verdim. Umarım incelerken keyif alırsınız!</p>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Film ve Dizi İzleme
+                    </div>
+                    <div class="card-body" id="film-dizi">
+                        <!-- TMDb API ile doldurulacak -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Kitap Okuma
+                    </div>
+                    <div class="card-body" id="kitap-okuma">
+                        <!-- Google Books API ile doldurulacak -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        // Sevdiğin filmlerin TMDb ID'leri
+        var sevdiklerim = [198663, 157336, 763215, 496243, 671];
+
+        // Sevdiğin filmlerin bilgilerini çek
+        sevdiklerim.forEach(function (movieID) {
+            $.getJSON(`https://api.themoviedb.org/3/movie/${movieID}?api_key=cec21b2335be569b2efda5dd0e762b08&language=tr-TR`, function (data) {
+                if (data) {
+                    var moviesList = $('#film-dizi');
+                    moviesList.append(`
+                    <div class="film-card">
+                        <div class="card">
+                            <img src="https://image.tmdb.org/t/p/original${data.poster_path}" class="card-img-top" alt="${data.title}">
+                            <div class="card-body">
+                                <h5 class="card-title">${data.title}</h5>
+                                <p class="card-text">${data.overview}</p>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                }
+            });
+        });
+
+        var booksList = $('#kitap-okuma');
+        var kitaplar = [
+            { title: "Hayvan Çiftliği", authors: "George Orwell", description: "Distopik bir masal olan Hayvan Çiftliği, hayvanların isyanını ve sonrasında ortaya çıkan yönetim sorunlarını ele alır." },
+            { title: "Küçük Prens", authors: "Antoine de Saint-Exupéry", description: "Küçük Prens, insanın iç dünyasını ve hayatı anlama çabasını sade bir dille ele alan klasik bir eserdir." },
+            { title: "Dönüşüm", authors: "Franz Kafka", description: "Dönüşüm, bir sabah kendini dev bir böceğe dönüşmüş olarak bulan Gregor Samsa'nın hikayesini anlatır." },
+            { title: "Sineklerin Tanrısı", authors: "William Golding", description: "Sineklerin Tanrısı, bir grup çocuğun terkedilmiş bir adada hayatta kalma mücadelesini ve insan doğasının karanlık yönlerini inceler." },
+            { title: "Harry Potter ve Felsefe Taşı", authors: "J.K. Rowling", description: "Harry Potter'ın sihirli dünyasına ilk adımı atın ve Hogwarts Cadılık ve Büyücülük Okulu'na hoş geldiniz deyin!" },
+            { title: "Harry Potter ve Sırlar Odası", authors: "J.K. Rowling", description: "Harry, Ron ve Hermione, Hogwarts'ta ikinci yıl maceraları yaşarken birçok sır perdesini aralayacaklar." },
+            { title: "Harry Potter ve Azkaban Tutsağı", authors: "J.K. Rowling", description: "Harry, Azkaban'dan kaçan tehlikeli bir mahkumla karşı karşıya gelirken, gerçek dostlarının ve gücünün önemini keşfeder." },
+            { title: "Harry Potter ve Zümrüdüanka Yoldaşlığı", authors: "J.K. Rowling", description: "Harry, Voldemort'un geri döndüğünü kanıtlamaya çalışırken, dostlarını korumak için zorlu bir mücadeleye girişir." },
+            { title: "Harry Potter ve Melez Prens", authors: "J.K. Rowling", description: "Harry, Hogwarts'ta Voldemort'un hedeflerini anlamak için Dumbledore'un rehberliğinde derinlere inerken, geçmişin sırlarını açığa çıkarır." },
+            { title: "Harry Potter ve Ölüm Yadigarları", authors: "J.K. Rowling", description: "Harry, Voldemort'a karşı son mücadelesine hazırlanırken, Ölüm Yadigarları'nı aramak için tehlikeli bir yolculuğa çıkar." }
+        ];
+
+        kitaplar.forEach(function (kitap) {
+            $.getJSON(`https://www.googleapis.com/books/v1/volumes?q=${kitap.title}&maxResults=1`, function (data) {
+                var book = data.items ? data.items[0] : null;
+                if (book) {
+                    var title = book.volumeInfo.title;
+                    var authors = book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : 'Bilinmeyen Yazar';
+                    var description = book.volumeInfo.description ? book.volumeInfo.description : 'Açıklama mevcut değil';
+                    var thumbnail = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail.replace(/^http:\/\//i, 'https://') : 'https://via.placeholder.com/128x192.png?text=No+Image';
+
+                    booksList.append(`
+                        <div class="book-card">
+                            <div class="card">
+                                <img src="${thumbnail}" class="card-img-top" alt="${title} Kapak">
+                                <div class="card-body">
+                                    <h5 class="card-title">${title}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">${authors}</h6>
+                                    <p class="card-text">${description}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                } else {
+                    booksList.append(`
+                        <div class="book-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">${kitap.title}</h5>
+                                    <p class="card-text">${kitap.description}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                }
+            });
+        });
+    </script>
+
+    <div class="social-icons">
+        <a href="https://www.instagram.com/gurelnisanur?igsh=MXdkZzU2M2MxdjF2Yg==" class="social-icon"
+            target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.linkedin.com/in/nisa-nur-g%C3%BCrel-b5586a27a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+            class="social-icon" target="_blank"><i class="fab fa-linkedin"></i></a>
+        <a href="https://github.com/gurelnisanur?tab=repositories" class="social-icon" target="_blank"><i
+                class="fab fa-github"></i></a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
